@@ -1,0 +1,10 @@
+Tactile-ETA
+Copyright 2026 The Tactile-ETA Authors.
+
+Includes runtime components from OpenETA and RLinf.
+Copyright 2026 The OpenETA Authors.
+Copyright 2025 The RLinf Authors.
+These components retain their Apache License 2.0 notices.
+
+UniVTAC expert demonstration derivatives are attributed separately in
+demonstrations/README.md.

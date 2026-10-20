@@ -1,0 +1,832 @@
+{
+  "text": {
+    "examples": [
+      {
+        "example_id": "official_episode_0",
+        "outcome": "success",
+        "segments": [
+          {
+            "after": {
+              "ee_xyz_wxyz": [
+                0.4990387260913849,
+                -0.0027115459088236094,
+                0.19915997982025146,
+                1.5808420357643627e-05,
+                0.9868664741516113,
+                0.1615375429391861,
+                -2.2143072783364914e-05
+              ],
+              "joint": [
+                -0.10137267410755157,
+                0.2820279598236084,
+                0.08927780389785767,
+                -2.401121139526367,
+                -0.05599077790975571,
+                2.681422233581543,
+                0.495474636554718,
+                0.0007180775864981115,
+                0.0007181555847637355
+              ],
+              "recorded_step": 510
+            },
+            "before": {
+              "ee_xyz_wxyz": [
+                0.49903714656829834,
+                -0.00271328235976398,
+                0.19915926456451416,
+                -1.381380388920661e-05,
+                0.9153613448143005,
+                -0.4026329815387726,
+                -2.9722527870035265e-06
+              ],
+              "joint": [
+                0.015597755089402199,
+                0.28082823753356934,
+                -0.019572004675865173,
+                -2.4014205932617188,
+                0.012294583022594452,
+                2.682173728942871,
+                1.599953293800354,
+                0.0007181678665801883,
+                0.0007180736283771694
+              ],
+              "recorded_step": 310
+            },
+            "feedback": "Observed state transition; original execution feedback is not separately recorded.",
+            "measured_motion": {
+              "finger_position_change_m": [
+                -9.028008207678795e-08,
+                8.195638656616211e-08
+              ],
+              "nominal_duration_s": 1.6666666666666667,
+              "rotation_vector_in_base_rad": [
+                -3.9571091246302294e-05,
+                4.541375860077025e-05,
+                1.1532800214469212
+              ],
+              "translation_in_base_mm": [
+                0.0015795230865478516,
+                0.0017364509403705597,
+                0.0007152557373046875
+              ]
+            },
+            "segment": 1,
+            "vision_labels": [
+              "example 0 segment 1 head before/after",
+              "example 0 segment 1 wrist before/after"
+            ]
+          },
+          {
+            "after": {
+              "ee_xyz_wxyz": [
+                0.49904048442840576,
+                -0.0027110108640044928,
+                0.19915953278541565,
+                1.69491431734059e-05,
+                0.9940081834793091,
+                0.10930509120225906,
+                -2.2427611838793382e-05
+              ],
+              "joint": [
+                -0.08379942178726196,
+                0.28161266446113586,
+                0.07292623072862625,
+                -2.4012115001678467,
+                -0.045720599591732025,
+                2.6816582679748535,
+                0.5935892462730408,
+                0.0007177169318310916,
+                0.0007185045396909118
+              ],
+              "recorded_step": 542
+            },
+            "before": {
+              "ee_xyz_wxyz": [
+                0.4990387260913849,
+                -0.0027115459088236094,
+                0.19915997982025146,
+                1.5808420357643627e-05,
+                0.9868664741516113,
+                0.1615375429391861,
+                -2.2143072783364914e-05
+              ],
+              "joint": [
+                -0.10137267410755157,
+                0.2820279598236084,
+                0.08927780389785767,
+                -2.401121139526367,
+                -0.05599077790975571,
+                2.681422233581543,
+                0.495474636554718,
+                0.0007180775864981115,
+                0.0007181555847637355
+              ],
+              "recorded_step": 510
+            },
+            "feedback": "Observed state transition; original execution feedback is not separately recorded.",
+            "measured_motion": {
+              "finger_position_change_m": [
+                -3.6065466701984406e-07,
+                3.489549271762371e-07
+              ],
+              "nominal_duration_s": 0.26666666666666666,
+              "rotation_vector_in_base_rad": [
+                -4.43284155242798e-06,
+                -1.775461888819872e-06,
+                -0.10544908480231857
+              ],
+              "translation_in_base_mm": [
+                0.0017583370208740234,
+                0.0005350448191165924,
+                -0.0004470348358154297
+              ]
+            },
+            "segment": 2,
+            "vision_labels": [
+              "example 0 segment 2 head before/after",
+              "example 0 segment 2 wrist before/after"
+            ]
+          },
+          {
+            "after": {
+              "ee_xyz_wxyz": [
+                0.49903929233551025,
+                -0.0026995667722076178,
+                0.22915062308311462,
+                1.3151956409274135e-05,
+                0.99400794506073,
+                0.10930673778057098,
+                -2.4948969439719804e-05
+              ],
+              "joint": [
+                -0.08517034351825714,
+                0.20665188133716583,
+                0.07676460593938828,
+                -2.404282808303833,
+                -0.03111487254500389,
+                2.6100854873657227,
+                0.5831395983695984,
+                0.000718088005669415,
+                0.0007181454566307366
+              ],
+              "recorded_step": 696
+            },
+            "before": {
+              "ee_xyz_wxyz": [
+                0.49904048442840576,
+                -0.0027110108640044928,
+                0.19915953278541565,
+                1.69491431734059e-05,
+                0.9940081834793091,
+                0.10930509120225906,
+                -2.2427611838793382e-05
+              ],
+              "joint": [
+                -0.08379942178726196,
+                0.28161266446113586,
+                0.07292623072862625,
+                -2.4012115001678467,
+                -0.045720599591732025,
+                2.6816582679748535,
+                0.5935892462730408,
+                0.0007177169318310916,
+                0.0007185045396909118
+              ],
+              "recorded_step": 542
+            },
+            "feedback": "Observed state transition; original execution feedback is not separately recorded.",
+            "measured_motion": {
+              "finger_position_change_m": [
+                3.710738383233547e-07,
+                -3.5908306017518044e-07
+              ],
+              "nominal_duration_s": 1.2833333333333334,
+              "rotation_vector_in_base_rad": [
+                6.997742254584346e-06,
+                5.842671479095614e-06,
+                3.3252901825926354e-06
+              ],
+              "translation_in_base_mm": [
+                -0.0011920928955078125,
+                0.011444091796875,
+                29.991090774536133
+              ]
+            },
+            "segment": 3,
+            "vision_labels": [
+              "example 0 segment 3 head before/after",
+              "example 0 segment 3 wrist before/after"
+            ]
+          },
+          {
+            "after": {
+              "ee_xyz_wxyz": [
+                0.4990393817424774,
+                -0.00269951275549829,
+                0.229150652885437,
+                1.3122180462232791e-05,
+                0.9940080046653748,
+                0.10930678248405457,
+                -2.4856693926267326e-05
+              ],
+              "joint": [
+                -0.08517032116651535,
+                0.20665188133716583,
+                0.07676459848880768,
+                -2.404282569885254,
+                -0.031114865094423294,
+                2.6100854873657227,
+                0.5831395387649536,
+                0.0007180862594395876,
+                0.0007181470864452422
+              ],
+              "recorded_step": 706
+            },
+            "before": {
+              "ee_xyz_wxyz": [
+                0.49903929233551025,
+                -0.0026995667722076178,
+                0.22915062308311462,
+                1.3151956409274135e-05,
+                0.99400794506073,
+                0.10930673778057098,
+                -2.4948969439719804e-05
+              ],
+              "joint": [
+                -0.08517034351825714,
+                0.20665188133716583,
+                0.07676460593938828,
+                -2.404282808303833,
+                -0.03111487254500389,
+                2.6100854873657227,
+                0.5831395983695984,
+                0.000718088005669415,
+                0.0007181454566307366
+              ],
+              "recorded_step": 696
+            },
+            "feedback": "Observed state transition; original execution feedback is not separately recorded.",
+            "measured_motion": {
+              "finger_position_change_m": [
+                -1.7462298274040222e-09,
+                1.6298145055770874e-09
+              ],
+              "nominal_duration_s": 0.08333333333333333,
+              "rotation_vector_in_base_rad": [
+                7.93717753652441e-08,
+                -1.7693756704240142e-07,
+                7.584181200751902e-08
+              ],
+              "translation_in_base_mm": [
+                8.940696716308594e-05,
+                5.4016709327697754e-05,
+                2.9802322387695312e-05
+              ]
+            },
+            "segment": 4,
+            "vision_labels": [
+              "example 0 segment 4 head before/after",
+              "example 0 segment 4 wrist before/after"
+            ]
+          }
+        ]
+      },
+      {
+        "example_id": "official_episode_1",
+        "outcome": "success",
+        "segments": [
+          {
+            "after": {
+              "ee_xyz_wxyz": [
+                0.4980367422103882,
+                0.0032468969002366066,
+                0.19918975234031677,
+                4.369871021481231e-06,
+                0.9550419449806213,
+                0.296470582485199,
+                -1.007186892820755e-05
+              ],
+              "joint": [
+                -0.14140278100967407,
+                0.2816431224346161,
+                0.1376102864742279,
+                -2.404158592224121,
+                -0.08605201542377472,
+                2.6817870140075684,
+                0.25141024589538574,
+                0.0007145684212446213,
+                0.0007147714495658875
+              ],
+              "recorded_step": 520
+            },
+            "before": {
+              "ee_xyz_wxyz": [
+                0.49804478883743286,
+                0.0032408260740339756,
+                0.19919005036354065,
+                -9.988793863158207e-06,
+                0.932441771030426,
+                -0.36132004857063293,
+                6.873948223073967e-06
+              ],
+              "joint": [
+                0.008947506546974182,
+                0.278674840927124,
+                -0.0022687034215778112,
+                -2.4048361778259277,
+                0.0014421383384615183,
+                2.683529853820801,
+                1.5302375555038452,
+                0.0007145270355977118,
+                0.0007148099248297513
+              ],
+              "recorded_step": 304
+            },
+            "feedback": "Observed state transition; original execution feedback is not separately recorded.",
+            "measured_motion": {
+              "finger_position_change_m": [
+                4.1385646909475327e-08,
+                -3.8475263863801956e-08
+              ],
+              "nominal_duration_s": 1.8,
+              "rotation_vector_in_base_rad": [
+                -2.5926673866271996e-05,
+                3.145328992863294e-05,
+                1.3413564012914814
+              ],
+              "translation_in_base_mm": [
+                -0.008046627044677734,
+                0.006070826202630997,
+                -0.0002980232238769531
+              ]
+            },
+            "segment": 1,
+            "vision_labels": [
+              "example 1 segment 1 head before/after",
+              "example 1 segment 1 wrist before/after"
+            ]
+          },
+          {
+            "after": {
+              "ee_xyz_wxyz": [
+                0.49802911281585693,
+                0.003255922580137849,
+                0.19919922947883606,
+                1.0381546417193022e-05,
+                0.9610472321510315,
+                0.2763839364051819,
+                -1.1879737940034829e-05
+              ],
+              "joint": [
+                -0.1342005580663681,
+                0.2813180685043335,
+                0.13092809915542603,
+                -2.4042530059814453,
+                -0.08185072243213654,
+                2.6819374561309814,
+                0.29036271572113037,
+                0.0007143958355300128,
+                0.0007149377488531172
+              ],
+              "recorded_step": 552
+            },
+            "before": {
+              "ee_xyz_wxyz": [
+                0.4980367422103882,
+                0.0032468969002366066,
+                0.19918975234031677,
+                4.369871021481231e-06,
+                0.9550419449806213,
+                0.296470582485199,
+                -1.007186892820755e-05
+              ],
+              "joint": [
+                -0.14140278100967407,
+                0.2816431224346161,
+                0.1376102864742279,
+                -2.404158592224121,
+                -0.08605201542377472,
+                2.6817870140075684,
+                0.25141024589538574,
+                0.0007145684212446213,
+                0.0007147714495658875
+              ],
+              "recorded_step": 520
+            },
+            "feedback": "Observed state transition; original execution feedback is not separately recorded.",
+            "measured_motion": {
+              "finger_position_change_m": [
+                -1.7258571460843086e-07,
+                1.6629928722977638e-07
+              ],
+              "nominal_duration_s": 0.26666666666666666,
+              "rotation_vector_in_base_rad": [
+                -1.2907845073439473e-05,
+                -4.0793878001305945e-07,
+                -0.04193103718300233
+              ],
+              "translation_in_base_mm": [
+                -0.00762939453125,
+                0.009025679901242256,
+                0.00947713851928711
+              ]
+            },
+            "segment": 2,
+            "vision_labels": [
+              "example 1 segment 2 head before/after",
+              "example 1 segment 2 wrist before/after"
+            ]
+          },
+          {
+            "after": {
+              "ee_xyz_wxyz": [
+                0.4980270564556122,
+                0.003260831581428647,
+                0.22919932007789612,
+                1.7232217942364514e-05,
+                0.9610472917556763,
+                0.2763836979866028,
+                -1.3586370187113062e-05
+              ],
+              "joint": [
+                -0.13135291635990143,
+                0.20557336509227753,
+                0.13270103931427002,
+                -2.4075770378112793,
+                -0.0534546785056591,
+                2.610752820968628,
+                0.2700352966785431,
+                0.000714578025508672,
+                0.0007147621363401413
+              ],
+              "recorded_step": 706
+            },
+            "before": {
+              "ee_xyz_wxyz": [
+                0.49802911281585693,
+                0.003255922580137849,
+                0.19919922947883606,
+                1.0381546417193022e-05,
+                0.9610472321510315,
+                0.2763839364051819,
+                -1.1879737940034829e-05
+              ],
+              "joint": [
+                -0.1342005580663681,
+                0.2813180685043335,
+                0.13092809915542603,
+                -2.4042530059814453,
+                -0.08185072243213654,
+                2.6819374561309814,
+                0.29036271572113037,
+                0.0007143958355300128,
+                0.0007149377488531172
+              ],
+              "recorded_step": 552
+            },
+            "feedback": "Observed state transition; original execution feedback is not separately recorded.",
+            "measured_motion": {
+              "finger_position_change_m": [
+                1.8218997865915298e-07,
+                -1.7561251297593117e-07
+              ],
+              "nominal_duration_s": 1.2833333333333334,
+              "rotation_vector_in_base_rad": [
+                -1.4111015000478999e-05,
+                -5.065289501213708e-07,
+                -4.910833018341948e-07
+              ],
+              "translation_in_base_mm": [
+                -0.0020563602447509766,
+                0.004909001290798187,
+                30.000091552734375
+              ]
+            },
+            "segment": 3,
+            "vision_labels": [
+              "example 1 segment 3 head before/after",
+              "example 1 segment 3 wrist before/after"
+            ]
+          },
+          {
+            "after": {
+              "ee_xyz_wxyz": [
+                0.4980272650718689,
+                0.0032608704641461372,
+                0.22919946908950806,
+                1.722466004139278e-05,
+                0.961047351360321,
+                0.2763836681842804,
+                -1.3327071428648196e-05
+              ],
+              "joint": [
+                -0.13135285675525665,
+                0.2055734246969223,
+                0.13270099461078644,
+                -2.4075767993927,
+                -0.05345471203327179,
+                2.610752820968628,
+                0.2700352668762207,
+                0.0007145776180550456,
+                0.0007147624273784459
+              ],
+              "recorded_step": 716
+            },
+            "before": {
+              "ee_xyz_wxyz": [
+                0.4980270564556122,
+                0.003260831581428647,
+                0.22919932007789612,
+                1.7232217942364514e-05,
+                0.9610472917556763,
+                0.2763836979866028,
+                -1.3586370187113062e-05
+              ],
+              "joint": [
+                -0.13135291635990143,
+                0.20557336509227753,
+                0.13270103931427002,
+                -2.4075770378112793,
+                -0.0534546785056591,
+                2.610752820968628,
+                0.2700352966785431,
+                0.000714578025508672,
+                0.0007147621363401413
+              ],
+              "recorded_step": 706
+            },
+            "feedback": "Observed state transition; original execution feedback is not separately recorded.",
+            "measured_motion": {
+              "finger_position_change_m": [
+                -4.0745362639427185e-10,
+                2.9103830456733704e-10
+              ],
+              "nominal_duration_s": 0.08333333333333333,
+              "rotation_vector_in_base_rad": [
+                1.578594603651908e-07,
+                -4.942218778669685e-07,
+                -9.022166493066739e-08
+              ],
+              "translation_in_base_mm": [
+                0.0002086162567138672,
+                3.888271749019623e-05,
+                0.00014901161193847656
+              ]
+            },
+            "segment": 4,
+            "vision_labels": [
+              "example 1 segment 4 head before/after",
+              "example 1 segment 4 wrist before/after"
+            ]
+          }
+        ]
+      }
+    ],
+    "interpretation": "Historical measured expert motion, not recorded move_to commands. Do not copy historical absolute coordinates into the current scene.",
+    "outcome_convention": "Success is the official per-episode metadata result; no checker rerun.",
+    "robot_convention": "EE is measured panda_hand pose relative to robot base: metres then quaternion wxyz; not OpenETA world gripper-center TCP. Joint vector: seven arm radians then two finger positions in metres.",
+    "task_goal": "Rotate the key in the slot until mechanical resistance is sensed, then pull the key straight out.",
+    "time_convention": "Frame step values are recorded. Seconds below are nominal step differences / 120 from published collect timing, not an embedded per-frame clock.",
+    "unrecorded": "Original actuator/tool commands and force/grasp-state labels are unavailable.",
+    "historical_touch": [
+      {
+        "example_id": "official_episode_0",
+        "image_labels": [
+          "example 0 segment 1 left_tactile history",
+          "example 0 segment 1 right_tactile history"
+        ],
+        "recorded_steps": [
+          310,
+          510
+        ],
+        "segment": 1,
+        "selection": "segment-end image/motion change, not slip labels"
+      },
+      {
+        "example_id": "official_episode_0",
+        "image_labels": [
+          "example 0 segment 2 left_tactile history",
+          "example 0 segment 2 right_tactile history"
+        ],
+        "recorded_steps": [
+          510,
+          542
+        ],
+        "segment": 2,
+        "selection": "segment-end image/motion change, not slip labels"
+      },
+      {
+        "example_id": "official_episode_0",
+        "image_labels": [
+          "example 0 segment 3 left_tactile history",
+          "example 0 segment 3 right_tactile history"
+        ],
+        "recorded_steps": [
+          542,
+          572,
+          574,
+          696
+        ],
+        "segment": 3,
+        "selection": "segment-end image/motion change, not slip labels"
+      },
+      {
+        "example_id": "official_episode_0",
+        "image_labels": [
+          "example 0 segment 4 left_tactile history",
+          "example 0 segment 4 right_tactile history"
+        ],
+        "recorded_steps": [
+          696,
+          706
+        ],
+        "segment": 4,
+        "selection": "segment-end image/motion change, not slip labels"
+      },
+      {
+        "example_id": "official_episode_1",
+        "image_labels": [
+          "example 1 segment 1 left_tactile history",
+          "example 1 segment 1 right_tactile history"
+        ],
+        "recorded_steps": [
+          304,
+          520
+        ],
+        "segment": 1,
+        "selection": "segment-end image/motion change, not slip labels"
+      },
+      {
+        "example_id": "official_episode_1",
+        "image_labels": [
+          "example 1 segment 2 left_tactile history",
+          "example 1 segment 2 right_tactile history"
+        ],
+        "recorded_steps": [
+          520,
+          552
+        ],
+        "segment": 2,
+        "selection": "segment-end image/motion change, not slip labels"
+      },
+      {
+        "example_id": "official_episode_1",
+        "image_labels": [
+          "example 1 segment 3 left_tactile history",
+          "example 1 segment 3 right_tactile history"
+        ],
+        "recorded_steps": [
+          552,
+          630,
+          632,
+          706
+        ],
+        "segment": 3,
+        "selection": "segment-end image/motion change, not slip labels"
+      },
+      {
+        "example_id": "official_episode_1",
+        "image_labels": [
+          "example 1 segment 4 left_tactile history",
+          "example 1 segment 4 right_tactile history"
+        ],
+        "recorded_steps": [
+          706,
+          716
+        ],
+        "segment": 4,
+        "selection": "segment-end image/motion change, not slip labels"
+      }
+    ]
+  },
+  "images": [
+    {
+      "label": "example 0 segment 1 head before/after",
+      "path": "images/e0_s1_head.png"
+    },
+    {
+      "label": "example 0 segment 1 wrist before/after",
+      "path": "images/e0_s1_wrist.png"
+    },
+    {
+      "label": "example 0 segment 2 head before/after",
+      "path": "images/e0_s2_head.png"
+    },
+    {
+      "label": "example 0 segment 2 wrist before/after",
+      "path": "images/e0_s2_wrist.png"
+    },
+    {
+      "label": "example 0 segment 3 head before/after",
+      "path": "images/e0_s3_head.png"
+    },
+    {
+      "label": "example 0 segment 3 wrist before/after",
+      "path": "images/e0_s3_wrist.png"
+    },
+    {
+      "label": "example 0 segment 4 head before/after",
+      "path": "images/e0_s4_head.png"
+    },
+    {
+      "label": "example 0 segment 4 wrist before/after",
+      "path": "images/e0_s4_wrist.png"
+    },
+    {
+      "label": "example 1 segment 1 head before/after",
+      "path": "images/e1_s1_head.png"
+    },
+    {
+      "label": "example 1 segment 1 wrist before/after",
+      "path": "images/e1_s1_wrist.png"
+    },
+    {
+      "label": "example 1 segment 2 head before/after",
+      "path": "images/e1_s2_head.png"
+    },
+    {
+      "label": "example 1 segment 2 wrist before/after",
+      "path": "images/e1_s2_wrist.png"
+    },
+    {
+      "label": "example 1 segment 3 head before/after",
+      "path": "images/e1_s3_head.png"
+    },
+    {
+      "label": "example 1 segment 3 wrist before/after",
+      "path": "images/e1_s3_wrist.png"
+    },
+    {
+      "label": "example 1 segment 4 head before/after",
+      "path": "images/e1_s4_head.png"
+    },
+    {
+      "label": "example 1 segment 4 wrist before/after",
+      "path": "images/e1_s4_wrist.png"
+    },
+    {
+      "label": "example 0 segment 1 left_tactile history",
+      "path": "images/e0_s1_left_tactile.png"
+    },
+    {
+      "label": "example 0 segment 1 right_tactile history",
+      "path": "images/e0_s1_right_tactile.png"
+    },
+    {
+      "label": "example 0 segment 2 left_tactile history",
+      "path": "images/e0_s2_left_tactile.png"
+    },
+    {
+      "label": "example 0 segment 2 right_tactile history",
+      "path": "images/e0_s2_right_tactile.png"
+    },
+    {
+      "label": "example 0 segment 3 left_tactile history",
+      "path": "images/e0_s3_left_tactile.png"
+    },
+    {
+      "label": "example 0 segment 3 right_tactile history",
+      "path": "images/e0_s3_right_tactile.png"
+    },
+    {
+      "label": "example 0 segment 4 left_tactile history",
+      "path": "images/e0_s4_left_tactile.png"
+    },
+    {
+      "label": "example 0 segment 4 right_tactile history",
+      "path": "images/e0_s4_right_tactile.png"
+    },
+    {
+      "label": "example 1 segment 1 left_tactile history",
+      "path": "images/e1_s1_left_tactile.png"
+    },
+    {
+      "label": "example 1 segment 1 right_tactile history",
+      "path": "images/e1_s1_right_tactile.png"
+    },
+    {
+      "label": "example 1 segment 2 left_tactile history",
+      "path": "images/e1_s2_left_tactile.png"
+    },
+    {
+      "label": "example 1 segment 2 right_tactile history",
+      "path": "images/e1_s2_right_tactile.png"
+    },
+    {
+      "label": "example 1 segment 3 left_tactile history",
+      "path": "images/e1_s3_left_tactile.png"
+    },
+    {
+      "label": "example 1 segment 3 right_tactile history",
+      "path": "images/e1_s3_right_tactile.png"
+    },
+    {
+      "label": "example 1 segment 4 left_tactile history",
+      "path": "images/e1_s4_left_tactile.png"
+    },
+    {
+      "label": "example 1 segment 4 right_tactile history",
+      "path": "images/e1_s4_right_tactile.png"
+    }
+  ]
+}

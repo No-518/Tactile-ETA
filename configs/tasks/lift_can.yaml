@@ -1,0 +1,69 @@
+round: Tactile-ETA
+task: lift_can
+task_config: demo
+mode: eval
+device: cuda:0
+model: gpt-6-astra
+reasoning_effort: low
+max_move_requests: 30
+max_tool_calls: 100
+codex_timeout_seconds: 3600
+startup_timeout_seconds: 900
+shutdown_timeout_seconds: 300
+max_control_steps_per_move: 80
+max_joint_delta_rad: 0.025
+position_tolerance_m: 0.003
+orientation_tolerance_rad: 0.05235987756
+gripper_settle_window_seconds: 0.1
+gripper_settle_tolerance_m: 0.0002
+gripper_target_tolerance_m: 0.001
+max_gripper_wait_steps: 40
+terminal_grace_seconds: 300
+tactile_history:
+  tracking_width: 160
+  roi_fraction:
+  - 0.08
+  - 0.08
+  - 0.92
+  - 0.92
+  patch_radius: 6
+  search_radius: 4
+  minimum_patch_std: 8.0
+  maximum_patch_mse: 900.0
+  minimum_match_margin: 1.0
+  minimum_tracking_quality: 0.35
+  motion_threshold_px: 2.0
+  difference_threshold: 0.015
+demonstrations: true
+task_instruction: Grasp the horizontal cylindrical can on the ground plane and lift
+  it vertically without slippage.
+task_rule_ablation: true
+public_task_rules: 'Static native rules: can world pose-origin z <0.01 m and absolute
+  dot product of its x axis with world [0,0,1] >0.99. With the configured gsmini sensor,
+  maximum native indentation depth >8.0 mm causes early termination. Also, absolute
+  in-hand z change from the native reference >0.05 m together with absolute dot product
+  of the can z axis with world [0,0,1] >0.99 causes early termination. These are the
+  native predicates, not a minimum lift-height rule. Current indentation, in-hand
+  drift and object ground truth are not supplied. These are static requirements, not
+  current measurements. Only neutral episode-ended feedback is returned.'
+current_tactile_ablation: true
+demonstration_package: demonstrations/lift_can
+condition: tactile_eta
+task_information: R
+demonstration_condition: expert_demonstrations
+current_tactile: true
+feedback_protocol: native_eval_no_online_task_feedback_v1
+task_display_name: lift can
+scored: true
+wait_for_operator_release: false
+native_control_step_limit: 300
+demonstration_segment_policy: all_atoms
+shot: 2
+expert_ids:
+- 0
+- 1
+demonstration_set_id: official_0_1
+shared_demonstration_media: true
+defer_review_video: true
+native_reset_time_limit_seconds: null
+disable_initialization_timeout: true

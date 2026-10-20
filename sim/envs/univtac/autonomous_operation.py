@@ -1,0 +1,358 @@
+"""General pose control and evaluation budgets for the live UniVTAC backend.
+
+Targets use only the Agent request and measured robot state. No task geometry
+or expert action is used by the controller.
+"""
+from __future__ import annotations
+
+import json
+import time
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+TOOLS = ("observe", "mark_point", "move_to", "report_issue", "check_task", "finish_episode")
+PROMPT = """You control one live UniVTAC Insert Hole episode through
+OpenETA's general-purpose robot tools.
+
+Start by calling observe. Use the current camera images,
+bilateral tactile images, robot state, and execution feedback
+to decide your motion targets, orientation, and gripper actions.
+
+After each action, inspect the returned observations.
+You may probe, retreat, adjust, and retry within this episode.
+A recoverable tool failure does not end the task.
+
+Use check_task to verify completion and finish_episode to end.
+No operation demonstrations are provided.
+
+Do not infer task success merely because a command completed.
+
+Task goal: Insert the held object into the hole.
+Coordinates: xyz_m is the absolute TCP position in world metres;
+delta_mm is displacement in world or current grip_site axes, in millimetres.
+The TCP is UniVTAC's measured gripper center (fixed transform from panda_hand),
+not the LIBERO grip site. approach_world sets TCP +Z; jaw_world sets TCP +X.
+These fields specify orientation axes, not a task-specific rotation axis.
+Unspecified position/orientation/gripper remain unchanged.
+An omitted gripper preserves the previous two finger actuator targets, including
+the commands inherited from reset. Explicit open/close changes and retains them.
+Arm arrival and completion of a finite gripper wait are separate feedback;
+neither establishes a stable grasp or task success.
+After move_to, head/wrist show the current scene and the two tactile image strips
+show real segment-end tactile history on a shared time axis, at up to four times.
+These are selected image/motion changes, not slip labels or early warnings.
+The takeover reference is not necessarily a no-contact baseline.
+Use preview=true for target resolution without physics. Use execute_preview_id
+alone to execute that preview. A preview is valid until the next real request.
+"""
+
+
+def quaternion_matrix(q: Any) -> np.ndarray:
+    x, y, z, w = np.asarray(q, dtype=float) / np.linalg.norm(q)
+    return np.array([[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],
+                     [2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)],
+                     [2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]])
+
+
+def matrix_quaternion(r: np.ndarray) -> np.ndarray:
+    # Symmetric eigenproblem avoids the singular trace formula at 180 degrees.
+    k = np.array([[r[0,0]-r[1,1]-r[2,2],r[1,0]+r[0,1],r[2,0]+r[0,2],r[2,1]-r[1,2]],
+                  [r[1,0]+r[0,1],r[1,1]-r[0,0]-r[2,2],r[2,1]+r[1,2],r[0,2]-r[2,0]],
+                  [r[2,0]+r[0,2],r[2,1]+r[1,2],r[2,2]-r[0,0]-r[1,1],r[1,0]-r[0,1]],
+                  [r[2,1]-r[1,2],r[0,2]-r[2,0],r[1,0]-r[0,1],np.trace(r)]])
+    _, vectors = np.linalg.eigh(k)
+    q = vectors[:, -1]
+    return q if q[3] >= 0 else -q
+
+
+def rotvec_matrix(v: Any) -> np.ndarray:
+    v = np.asarray(v, dtype=float)
+    angle = np.linalg.norm(v)
+    if angle < 1e-12:
+        return np.eye(3)
+    x, y, z = v / angle
+    cross = np.array([[0,-z,y],[z,0,-x],[-y,x,0]])
+    return np.eye(3) + np.sin(angle)*cross + (1-np.cos(angle))*(cross@cross)
+
+
+def matrix_rotvec(r: np.ndarray) -> np.ndarray:
+    q = matrix_quaternion(r)
+    norm = np.linalg.norm(q[:3])
+    return 2*q[:3] if norm < 1e-12 else q[:3] * (2*np.arctan2(norm,q[3])/norm)
+
+
+def append_row(path: Path, row: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a") as f:
+        f.write(json.dumps(row, allow_nan=False) + "\n")
+
+
+def vector3(value: Any, name: str) -> np.ndarray:
+    v = np.asarray(value, dtype=float)
+    if v.shape != (3,) or not np.isfinite(v).all():
+        raise ValueError(f"{name} must contain three finite numbers")
+    return v
+
+
+def resolve_target(current: np.ndarray, request: dict[str, Any]) -> np.ndarray:
+    """Resolve OpenETA flat move_to fields in the backend's declared TCP frame."""
+    allowed = {"xyz_m", "delta_mm", "delta_frame", "approach_world", "jaw_world", "gripper", "preview", "execute_preview_id"}
+    if set(request) - allowed:
+        raise ValueError(f"unsupported fields: {sorted(set(request) - allowed)}")
+    if request.get("gripper") not in (None, "open", "close"):
+        raise ValueError("gripper must be open or close")
+    if request.get("delta_frame", "world") not in ("world", "grip_site"):
+        raise ValueError("delta_frame must be world or grip_site")
+    if request.get("xyz_m") is not None and request.get("delta_mm") is not None:
+        raise ValueError("use xyz_m or delta_mm, not both")
+    if not any(request.get(k) is not None for k in ("xyz_m", "delta_mm", "approach_world", "jaw_world", "gripper")):
+        raise ValueError("specify a position, orientation, or gripper command")
+    target = np.array(current, copy=True)
+    if request.get("xyz_m") is not None:
+        target[:3, 3] = vector3(request["xyz_m"], "xyz_m")
+    if request.get("delta_mm") is not None:
+        delta = vector3(request["delta_mm"], "delta_mm") / 1000.0
+        if request.get("delta_frame", "world") == "grip_site":
+            delta = current[:3, :3] @ delta
+        target[:3, 3] += delta
+    if request.get("approach_world") is not None or request.get("jaw_world") is not None:
+        z = vector3(request.get("approach_world", current[:3, 2]), "approach_world")
+        if np.linalg.norm(z) < 1e-8:
+            raise ValueError("approach_world must be nonzero")
+        z = z / np.linalg.norm(z)
+        x = vector3(request.get("jaw_world", current[:3, 0]), "jaw_world")
+        x = x - z * np.dot(x, z)
+        if np.linalg.norm(x) < 1e-8:
+            raise ValueError("jaw_world must not be parallel to approach_world")
+        x /= np.linalg.norm(x)
+        target[:3, :3] = np.column_stack((x, np.cross(z, x), z))
+    return target
+
+
+def pose_dict(matrix: np.ndarray) -> dict[str, Any]:
+    return {"xyz_m": matrix[:3, 3].tolist(), "quat_xyzw": matrix_quaternion(matrix[:3, :3]).tolist(),
+            "approach_world": matrix[:3, 2].tolist(), "jaw_world": matrix[:3, 0].tolist()}
+
+
+def pose_error(actual: np.ndarray, target: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    return target[:3, 3] - actual[:3, 3], matrix_rotvec(target[:3, :3] @ actual[:3, :3].T)
+
+
+def paced_reference(start: np.ndarray, target: np.ndarray, elapsed: float,
+                    linear_speed: float, angular_speed: float) -> np.ndarray:
+    """Time-parameterized Cartesian reference; actual motion is measured separately."""
+    if linear_speed <= 0 or angular_speed <= 0:
+        raise ValueError('Reference speeds must be positive')
+    dp, dr = pose_error(start, target)
+    duration = max(np.linalg.norm(dp) / linear_speed, np.linalg.norm(dr) / angular_speed)
+    fraction = min(1.0, max(0.0, elapsed) / max(duration, 1e-12))
+    reference = np.array(start, copy=True)
+    reference[:3, 3] += dp * fraction
+    reference[:3, :3] = rotvec_matrix(dr * fraction) @ start[:3, :3]
+    return reference
+
+
+def damped_joint_delta(jacobian: np.ndarray, error: np.ndarray, max_delta: float) -> np.ndarray:
+    delta = jacobian.T @ np.linalg.solve(jacobian @ jacobian.T + 0.0025 * np.eye(6), error)
+    return delta * min(1.0, max_delta / max(float(np.max(np.abs(delta))), 1e-12))
+
+
+def tensor_array(value: Any) -> np.ndarray:
+    return value.detach().cpu().numpy().copy()
+
+
+class GripperTargets:
+    """Preserve the last submitted pair, adapting only the scalar qpos dispatch."""
+
+    def __init__(self, robot: Any, root: Path):
+        self.robot = robot
+        ids = robot._gripper_ids
+        self.targets = tensor_array(robot.robot._joint_pos_target_sim[0, ids])
+        if self.targets.shape != (2,) or not np.isfinite(self.targets).all():
+            raise ValueError('Cannot inherit two finite native submitted gripper targets')
+        self.command = 'inherited_hold'
+        self.root = root
+        data = robot.robot.data
+        self.inherited = {
+            'source': 'Articulation._joint_pos_target_sim after official reset returned',
+            'joint_names': list(robot._gripper_joint_names),
+            'target_positions_m': self.targets.tolist(),
+            'application_target_positions_m': tensor_array(data.joint_pos_target[0, ids]).tolist(),
+            'measured_positions_m': tensor_array(robot.get_gripper_qpos_all()).reshape(-1).tolist(),
+            'actuator': {name: tensor_array(getattr(data, name)[0, ids]).tolist()
+                         for name in ('joint_stiffness', 'joint_damping', 'joint_effort_limits')},
+        }
+        append_row(root/'gripper_commands.jsonl', {'event': 'takeover', **self.inherited})
+
+    def select(self, command: str | None, counts: dict) -> None:
+        if command is not None:
+            self.targets[:] = float(self.robot.gripper_max_qpos) if command == 'open' else 0.0
+            self.command = command
+            append_row(self.root/'gripper_commands.jsonl', {
+                'event': 'command', 'command': command, 'target_positions_m': self.targets.tolist(),
+                'counts': counts})
+
+    def dispatch(self, action, take_action):
+        # The pinned qpos API forwards one scalar to set_gripper. Substitute the
+        # retained pair at that exact dispatch, before the native counted step.
+        import torch
+        original = self.robot.set_gripper
+
+        def paired_target(_scalar, vel=None, env_ids=None, force=True):
+            if force:
+                raise ValueError('Paired gripper adapter requires dynamic force=False')
+            target = torch.tensor(self.targets.tolist(), dtype=action.dtype, device=action.device)
+            return original(target, vel=vel, env_ids=env_ids, force=False)
+
+        self.robot.set_gripper = paired_target
+        try:
+            return take_action(action, action_type='qpos', force=False, is_save=False)
+        finally:
+            self.robot.set_gripper = original
+
+
+class NativeController:
+    """Measured-state IK with one native qpos action per control step."""
+    def __init__(self, task: Any, config: dict[str, Any], root: Path):
+        self.task, self.robot, self.config, self.root = task, task._robot_manager, config, root
+        self.initial_steps = int(task.step_count)
+        self.initial_physics = int(task._physics_step_count)
+        self.early_stop = False
+        self.success_available = callable(getattr(task, "check_success", None))
+        self.actual_motion_requests = 0
+        self.control_steps = 0
+        self.grasp = GripperTargets(self.robot, root) if self.robot is not None else None
+        self.after_step = None
+
+    def tcp(self) -> np.ndarray:
+        # Native get_ee_pose is base-relative; compose the actual robot root.
+        robot = self.robot.robot
+        base = np.eye(4)
+        base[:3, 3] = robot.data.root_link_pos_w[0].detach().cpu().numpy()
+        q = robot.data.root_link_quat_w[0].detach().cpu().numpy()
+        base[:3, :3] = quaternion_matrix(q[[1, 2, 3, 0]])
+        return base @ self.robot.get_gripper_center_pose().to_transformation_matrix()
+
+    def state(self) -> dict[str, Any]:
+        return {"tcp_frame": "univtac_gripper_center", "world_axes": "x/y/z, right-handed",
+                "position_unit": "metre", "quaternion_order": "xyzw", **pose_dict(self.tcp()),
+                "joint_positions_rad": self.robot.get_qpos()[0].tolist(),
+                "gripper_finger_positions_m": self.robot.get_gripper_qpos_all().cpu().tolist(),
+                "gripper_target_positions_m": self.grasp.targets.tolist(),
+                "gripper_command": self.grasp.command,
+                "gripper_joint_names": self.grasp.inherited['joint_names'],
+                "gripper_open_fraction": float(self.robot.get_gripper_percentage()),
+                "gripper_max_finger_qpos_m": float(self.robot.gripper_max_qpos),
+                "tcp_offset_from_hand_m": float(self.robot.cfg.gripper_offset)}
+
+    def counts(self) -> dict[str, Any]:
+        physics = int(self.task._physics_step_count) - self.initial_physics
+        return {"actual_motion_requests": self.actual_motion_requests, "control_steps": self.control_steps,
+                "native_action_count": int(self.task.take_action_cnt),
+                "physics_steps": physics, "simulation_time_seconds": physics * float(self.task.cfg.sim.dt),
+                "simulator_step": int(self.task.step_count), "native_step_limit": int(self.task.cfg.step_lim),
+                "initialization_control_steps": self.initial_steps, "initialization_physics_steps": self.initial_physics}
+
+    def terminal(self) -> str | None:
+        if bool(self.task.eval_success):
+            return "native_success"
+        if self.early_stop:
+            return "native_early_stop"
+        if self.task.take_action_cnt >= self.task.cfg.step_lim:
+            return "native_step_limit"
+        return None
+
+    def check(self) -> dict[str, Any]:
+        if not self.success_available:
+            return {"available": False, "success": None}
+        # Read-only checks use the same native predicate and latch as take_action.
+        if self.task.check_success():
+            self.task.eval_success = True
+        return {"available": True, "success": bool(self.task.eval_success)}
+
+    def execute(self, target: np.ndarray, gripper: str | None) -> dict[str, Any]:
+        import torch
+        start = time.monotonic()
+        before = self.tcp()
+        before_gripper = tensor_array(self.robot.get_gripper_qpos_all()).reshape(-1)
+        r = self.robot
+        joint_ids = r._arm_ids
+        self.grasp.select(gripper, self.counts())
+        gripper_history = []
+        gripper_done = gripper is None
+        reason = 'control_segment_limit'
+        moved = False
+        steps_before = self.control_steps
+        pacing = self.config.get('motion_pacing')
+        for step in range(self.config["max_control_steps_per_move"]):
+            if self.terminal():
+                break
+            actual = self.tcp()
+            dp, dr = pose_error(actual, target)
+            arm_reached = np.linalg.norm(dp) <= self.config["position_tolerance_m"] and np.linalg.norm(dr) <= self.config["orientation_tolerance_rad"]
+            if arm_reached and gripper_done:
+                reason = 'arm_reached' if gripper is None else 'arm_reached_and_gripper_wait_finished'
+                break
+            reference = target
+            if pacing:
+                dt = float(self.task.cfg.sim.dt) * int(self.task.cfg.decimation)
+                reference = paced_reference(before, target, (step + 1) * dt,
+                    pacing['linear_speed_m_s'], pacing['angular_speed_rad_s'])
+                dp, dr = pose_error(actual, reference)
+            counts_before = self.counts()
+            # PhysX Jacobians are world-frame link Jacobians. Shift to the TCP.
+            jac = r.robot.root_physx_view.get_jacobians()[0, r._jacobi_body_idx][:, joint_ids].detach().cpu().numpy().copy()
+            link_pos = r.robot.data.body_link_pos_w[0, r._body_idx].detach().cpu().numpy()
+            offset = actual[:3, 3] - link_pos
+            jac[:3] += np.cross(jac[3:].T, offset).T
+            delta = damped_joint_delta(jac, np.r_[dp, dr], self.config["max_joint_delta_rad"])
+            joints = r.robot.data.joint_pos[0, joint_ids].detach().cpu().numpy()
+            limits = r.robot.data.soft_joint_pos_limits[0, joint_ids].detach().cpu().numpy()
+            next_joints = np.clip(joints + delta, limits[:, 0], limits[:, 1])
+            action = torch.tensor([*next_joints, float(self.grasp.targets[0])], dtype=torch.float32, device=self.task.device)
+            # force=False sends actuator targets; it never sets simulator joint poses.
+            self.grasp.dispatch(action, self.task.take_action)
+            self.control_steps += 1
+            measured = tensor_array(r.get_gripper_qpos_all()).reshape(-1)
+            moved = moved or not np.allclose(self.tcp(), before, atol=1e-7) or not np.allclose(measured, before_gripper, atol=1e-7)
+            if not self.task.eval_success:
+                self.early_stop = bool(self.task.check_early_stop())
+            after = self.tcp()
+            measured_dp, measured_dr = pose_error(actual, after)
+            physical_dt = self.counts()['simulation_time_seconds'] - counts_before['simulation_time_seconds']
+            append_row(self.root / "control_steps.jsonl", {"index": self.control_steps, "qpos_target": action.cpu().tolist(),
+                       "reference": pose_dict(reference), "final_target": pose_dict(target),
+                       "before_tcp": pose_dict(actual), "after_tcp": pose_dict(after),
+                       "measured_translation_m": measured_dp.tolist(), "measured_rotation_rad": measured_dr.tolist(),
+                       "measured_linear_speed_m_s": float(np.linalg.norm(measured_dp) / physical_dt),
+                       "measured_angular_speed_rad_s": float(np.linalg.norm(measured_dr) / physical_dt),
+                       "control_dt_seconds": physical_dt,
+                       "actual": self.state(), "counts": self.counts(), "terminal": self.terminal()})
+            if self.after_step:
+                self.after_step()
+            gripper_history.append((self.counts()['simulation_time_seconds'], measured))
+            if gripper is not None:
+                window = self.config['gripper_settle_window_seconds']
+                recent = [q for t, q in gripper_history if t >= gripper_history[-1][0] - window]
+                covered = gripper_history[-1][0] - gripper_history[0][0] >= window
+                stable = covered and np.max(np.ptp(np.array(recent), axis=0)) <= self.config['gripper_settle_tolerance_m']
+                at_target = np.max(np.abs(measured - self.grasp.targets)) <= self.config['gripper_target_tolerance_m']
+                gripper_done = bool(stable or at_target or len(gripper_history) >= self.config['max_gripper_wait_steps'])
+        if moved:
+            self.actual_motion_requests += 1
+        actual = self.tcp()
+        dp, dr = pose_error(actual, target)
+        reached = bool(np.linalg.norm(dp) <= self.config["position_tolerance_m"] and np.linalg.norm(dr) <= self.config["orientation_tolerance_rad"])
+        return {"requested_target": pose_dict(target), "requested_gripper": gripper,
+                "actual": self.state(), "reached": reached,
+                "arm_reached": reached, "gripper_command": self.grasp.command,
+                "gripper_target_positions_m": self.grasp.targets.tolist(),
+                "gripper_measured_positions_m": tensor_array(r.get_gripper_qpos_all()).reshape(-1).tolist(),
+                "gripper_wait_finished": gripper_done,
+                "segment_finished": True, "segment_end_reason": self.terminal() or reason,
+                "remaining_position_delta_m": dp.tolist(), "remaining_rotation_rad": dr.tolist(),
+                "error": None if reached else (self.terminal() or "control_segment_not_reached"),
+                "control_steps": self.control_steps - steps_before, "physical_motion": moved,
+                "elapsed_seconds": time.monotonic() - start, "counts": self.counts()}

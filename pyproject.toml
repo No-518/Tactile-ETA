@@ -1,0 +1,26 @@
+[project]
+name = "tactile-eta"
+version = "0.1.0"
+description = "Tactile in-context learning for embodied task agents"
+requires-python = ">=3.11,<3.12"
+license = "Apache-2.0"
+dependencies = [
+  "anyio>=4",
+  "h5py>=3",
+  "imageio[ffmpeg]>=2.34",
+  "jsonschema>=4",
+  "mcp>=1.12,<2",
+  "numpy>=1.26",
+  "Pillow>=10",
+  "PyYAML>=6",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+prepare = ["opencv-python-headless>=4.10"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
