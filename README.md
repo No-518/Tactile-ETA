@@ -79,6 +79,20 @@ uv run --extra prepare python -m scripts.univtac.prepare_demonstrations \
 
 Set `demonstration_package` in the task YAML to use the new package.
 
+## Citation
+
+```bibtex
+@misc{wang2026tactileeta,
+  title  = {Embodied Task Agents Can Perform Fine Manipulation through Tactile In-Context Learning},
+  author = {Wang, Yubang and Huai, Zezheng and Zhang, Yifei and Wu, Jinhao and Chen, Yitong and Zhang, Haozhe and Li, Sixian and Gong, Jingjing and Lin, Zhenyang and Chen, Ziyang and Qiu, Xipeng},
+  year   = {2026},
+  eprint = {2610.27613},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.RO},
+  url    = {https://arxiv.org/abs/2610.27613}
+}
+```
+
 ## Acknowledgements
 
 Built on [OpenETA](https://github.com/OpenMOSS/OpenETA) and [UniVTAC](https://github.com/univtac/UniVTAC).
