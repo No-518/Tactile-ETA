@@ -82,14 +82,14 @@ Set `demonstration_package` in the task YAML to use the new package.
 ## Citation
 
 ```bibtex
-@misc{wang2026tactileeta,
-  title  = {Embodied Task Agents Can Perform Fine Manipulation through Tactile In-Context Learning},
-  author = {Wang, Yubang and Huai, Zezheng and Zhang, Yifei and Wu, Jinhao and Chen, Yitong and Zhang, Haozhe and Li, Sixian and Gong, Jingjing and Lin, Zhenyang and Chen, Ziyang and Qiu, Xipeng},
-  year   = {2026},
-  eprint = {2610.27613},
-  archivePrefix = {arXiv},
-  primaryClass = {cs.RO},
-  url    = {https://arxiv.org/abs/2610.27613}
+@misc{wang2026embodiedtaskagentsperform,
+      title={Embodied Task Agents Can Perform Fine Manipulation through Tactile In-Context Learning},
+      author={Yubang Wang and Zezheng Huai and Yifei Zhang and Jinhao Wu and Yitong Chen and Haozhe Zhang and Sixian Li and Jingjing Gong and Zhenyang Lin and Ziyang Chen and Xipeng Qiu},
+      year={2026},
+      eprint={2610.27613},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2610.27613},
 }
 ```
 
